@@ -100,11 +100,22 @@ function evaluate() {
 }
 //Deletes
 function deleteNumber(){
-    if(typeof label == 'string'){ //Delete will not work if used directly after previous answer evaluated
-        if(label.slice(-1) == operator) operator = '';
-        label = label.slice(0, -1);
-        label === '' ? label = '0': label = label;
-        display.textContent = label;
+    if(typeof label == 'string'){ //Delete will not work if used directly after previous answer evaluated        
+        if(sublabel.slice(-1) == operator && label == '0'){
+            console.log('true');
+            label = first+operator;
+            sublabel = '0';
+            first = '0';
+            display.textContent = label;
+            subdisplay.textContent = sublabel;
+        }
+        else{
+            if(label.slice(-1) == operator) operator = '';
+            label = label.slice(0, -1);
+            label === '' ? label = '0': label = label;
+            display.textContent = label;             
+        }
+
     }
 }
 
