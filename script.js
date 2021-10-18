@@ -24,9 +24,8 @@ const divide = (a, b) => a/b;
 
 //Decimal button
 decimalB.onclick = () => {
-    if(!label.includes('.'))
-        label = label + '.';
-        display.textContent = label;
+    if(label.toString().includes('.') == false) label += '.';
+    display.textContent = label;
 }
 //Numbers button
 numbersB.forEach( (button) => {
@@ -74,7 +73,6 @@ function clrDisp() {
 //Limit numbers to the screen display
 function shorten(number) {
     let answer = 0;
-    console.log(number)
     if(label == 'fuck you') answer = label;
     else if(Math.abs(number) >= 10000000000) {answer = number.toExponential(3)}
     else{
@@ -90,7 +88,6 @@ function evaluate() {
         second = label;
         sublabel = sublabel + ' ' + second;
         label = equal(first, second, operator);
-        console.log(label);
         if(label.toString() == 'fuck you') {
             sublabel = label;
             label = '0';
@@ -137,12 +134,12 @@ function enterOperator(key){
 
 window.addEventListener('keydown', handleKeyboardInput)
 function handleKeyboardInput(e) {
+    console.log(e.key);
     if (e.key >= 0 && e.key <= 9) enterKey(e.key);
-    if (e.key === '.') enterKey(e.key);
+    if (e.key === '.') decimalB.onclick();
     if (e.key === '=' || e.key === 'Enter') evaluate();
     if (e.key === 'Backspace') deleteNumber();
     if (e.key === 'Escape') clrDisp();
     if (e.key === '+' || e.key === '-' || e.key === '*' || e.key === '/')
       enterOperator(e.key);
 }
-
