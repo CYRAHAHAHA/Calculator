@@ -21,30 +21,9 @@ decimalB.onclick = () => {
         display.textContent = label;
 }
 
-equalB.onclick = () => {
-    if(sublabel.slice(-1) == operator){
-        second = label;
-        sublabel = sublabel + ' ' + second;
-        label = shorten(equal(first, second, operator));
-        if(label == 'fuck you') {
-            sublabel = label;
-            label = '0';
-        }
-        display.textContent = label;
-        console.log(label);
-        subdisplay.textContent = sublabel;
-        operator = '';
-    }
-}
+equalB.onclick = () => evaluate();
 
-dltB.onclick = () => {
-    if(typeof label == 'string'){
-        if(label.slice(-1) == operator) operator = '';
-        label = label.slice(0, -1);
-        label === '' ? label = '0': label = label;
-        display.textContent = label;
-    }
-}
+dltB.onclick = () => deleteNumber();
 
 numbersB.forEach( (button) => {
     button.addEventListener('click', function(e){
@@ -54,11 +33,7 @@ numbersB.forEach( (button) => {
 
 operatorsB.forEach((button) => {
     button.addEventListener('click', function(e){
-        if(operator == ''){
-            operator = e.target.textContent;
-            label += operator;
-            display.textContent = label;
-        }
+        enterOperator(e.target.textContent);
     });
 });
 
@@ -79,7 +54,7 @@ function equal(a,b,operator){
 
 function enterKey(pressed){
     if(typeof label != 'string') clrDisp();
-        if(label.slice(-1) == operator){       
+        if(label.slice(-1) == operator && sublabel.slice(-1) != '-'){       
             sublabel = label.slice(0, -1) + ' ' + operator;
             subdisplay.textContent = sublabel;
             first = sublabel.slice(0, -2);
@@ -99,12 +74,76 @@ function clrDisp() {
 }
 
 function shorten(number) {
+    let answer = 0;
     console.log(number)
-    if(number <= 10000000000){
+    if(label == 'fuck you') answer = label;
+    else if(Math.abs(number) >= 10000000000) {answer = number.toExponential(3)}
+    else{
         let length = 9 - (Math.ceil(number)).toString().length;
         length = Math.pow(10, length);
         answer = Math.round((number + Number.EPSILON) * length) / length;
     }
-    else if(number >= 10000000000) {answer = number.toExponential(4)};
     return answer;
+}
+
+function handleKeyboardInput(e) {
+    if (e.key >= 0 && e.key <= 9) enterKey(e.key);
+    if (e.key === '.') enterKey(e.key);
+    if (e.key === '=' || e.key === 'Enter') evaluate();
+    if (e.key === 'Backspace') deleteNumber();
+    if (e.key === 'Escape') clrDisp();
+    if (e.key === '+' || e.key === '-' || e.key === '*' || e.key === '/')
+      enterOperator(e.key);
+  }
+
+window.addEventListener('keydown', handleKeyboardInput)
+
+function evaluate() {
+    if(sublabel.slice(-1) == operator){
+        second = label;
+        sublabel = sublabel + ' ' + second;
+        label = equal(first, second, operator);
+        console.log(label);
+        if(label.toString() == 'fuck you') {
+            sublabel = label;
+            label = '0';
+        }
+        else label = shorten(label);
+        display.textContent = label;
+        subdisplay.textContent = sublabel;
+        operator = '';
+    }
+}
+
+function deleteNumber(){
+    if(typeof label == 'string'){
+        if(label.slice(-1) == operator) operator = '';
+        label = label.slice(0, -1);
+        label === '' ? label = '0': label = label;
+        display.textContent = label;
+    }
+}
+
+function enterOperator(key){ 
+    if(label == '0' && key == '-'){
+        label = '-';
+        display.textContent = label;
+    } 
+    else if(operator == ''){
+        operator = key;
+        label += operator;
+        display.textContent = label;
+    }
+    else{
+        if(key == '-'){
+            if(label.toString().slice(-1) == operator){ 
+                label = label.toString();      
+                sublabel = label.slice(0, -1) + ' ' + operator;
+                subdisplay.textContent = sublabel;
+                first = sublabel.slice(0, -2);
+                label = '-';
+                display.textContent = label;
+            }
+        }
+    }
 }
