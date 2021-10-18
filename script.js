@@ -12,36 +12,35 @@ let operator = '';
 let first = 0;
 let second = 0;
 
-
+//Buttons to clear, equals, delete
 clrB.onclick = () => clrDisp();
+equalB.onclick = () => evaluate();
+dltB.onclick = () => deleteNumber();
 
+const add = (a, b) => parseFloat(a)+parseFloat(b); //To deal with big +- numbers
+const minus = (a, b) => a-b;
+const times = (a, b) => a*b;
+const divide = (a, b) => a/b;
+
+//Decimal button
 decimalB.onclick = () => {
     if(!label.includes('.'))
         label = label + '.';
         display.textContent = label;
 }
-
-equalB.onclick = () => evaluate();
-
-dltB.onclick = () => deleteNumber();
-
+//Numbers button
 numbersB.forEach( (button) => {
     button.addEventListener('click', function(e){
         enterKey(e.target.textContent);
     });
 });
-
+//Operators button
 operatorsB.forEach((button) => {
     button.addEventListener('click', function(e){
         enterOperator(e.target.textContent);
     });
 });
-
-const add = (a, b) => parseFloat(a)+parseFloat(b);
-const minus = (a, b) => a-b;
-const times = (a, b) => a*b;
-const divide = (a, b) => a/b;
-
+//Calculation function
 function equal(a,b,operator){
     switch(operator){
         case '+': return add(a,b);
@@ -51,9 +50,9 @@ function equal(a,b,operator){
         default:
     }
 }
-
+//Numbers
 function enterKey(pressed){
-    if(typeof label != 'string') clrDisp();
+    if(typeof label != 'string') clrDisp(); //clears screen if number input immediately after previous answer evaluated
         if(label.slice(-1) == operator && sublabel.slice(-1) != '-'){       
             sublabel = label.slice(0, -1) + ' ' + operator;
             subdisplay.textContent = sublabel;
@@ -64,7 +63,7 @@ function enterKey(pressed){
         else if(label.length <= 9) (label += pressed);
         display.textContent = label;
 }
-
+//Clear screen
 function clrDisp() {
     label = '0';
     sublabel = '0';
@@ -72,7 +71,7 @@ function clrDisp() {
     display.textContent = '0';
     subdisplay.textContent = '0';
 }
-
+//Limit numbers to the screen display
 function shorten(number) {
     let answer = 0;
     console.log(number)
@@ -85,19 +84,7 @@ function shorten(number) {
     }
     return answer;
 }
-
-function handleKeyboardInput(e) {
-    if (e.key >= 0 && e.key <= 9) enterKey(e.key);
-    if (e.key === '.') enterKey(e.key);
-    if (e.key === '=' || e.key === 'Enter') evaluate();
-    if (e.key === 'Backspace') deleteNumber();
-    if (e.key === 'Escape') clrDisp();
-    if (e.key === '+' || e.key === '-' || e.key === '*' || e.key === '/')
-      enterOperator(e.key);
-  }
-
-window.addEventListener('keydown', handleKeyboardInput)
-
+//When Enter key is pressed
 function evaluate() {
     if(sublabel.slice(-1) == operator){
         second = label;
@@ -114,9 +101,9 @@ function evaluate() {
         operator = '';
     }
 }
-
+//Deletes
 function deleteNumber(){
-    if(typeof label == 'string'){
+    if(typeof label == 'string'){ //Delete will not work if used directly after previous answer evaluated
         if(label.slice(-1) == operator) operator = '';
         label = label.slice(0, -1);
         label === '' ? label = '0': label = label;
@@ -125,18 +112,18 @@ function deleteNumber(){
 }
 
 function enterOperator(key){ 
-    if(label == '0' && key == '-'){
+    if(label == '0' && key == '-'){ //To enter negatives
         label = '-';
         display.textContent = label;
     } 
-    else if(operator == ''){
+    else if(operator == ''){ //rest of operators
         operator = key;
         label += operator;
         display.textContent = label;
     }
     else{
         if(key == '-'){
-            if(label.toString().slice(-1) == operator){ 
+            if(label.toString().slice(-1) == operator){ //inputing negative directly after another operator (e.g. 100 * -100)
                 label = label.toString();      
                 sublabel = label.slice(0, -1) + ' ' + operator;
                 subdisplay.textContent = sublabel;
@@ -147,3 +134,15 @@ function enterOperator(key){
         }
     }
 }
+
+window.addEventListener('keydown', handleKeyboardInput)
+function handleKeyboardInput(e) {
+    if (e.key >= 0 && e.key <= 9) enterKey(e.key);
+    if (e.key === '.') enterKey(e.key);
+    if (e.key === '=' || e.key === 'Enter') evaluate();
+    if (e.key === 'Backspace') deleteNumber();
+    if (e.key === 'Escape') clrDisp();
+    if (e.key === '+' || e.key === '-' || e.key === '*' || e.key === '/')
+      enterOperator(e.key);
+}
+
